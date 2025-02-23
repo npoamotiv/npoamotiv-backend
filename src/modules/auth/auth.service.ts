@@ -10,19 +10,33 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(login: string, tabel: string, password: string): Promise<any> {
+  async validateUser(
+    login: string,
+    tabel: string,
+    password: string,
+  ): Promise<any> {
+    console.log('Attempting to validate user:', { login, tabel });
     const user = await this.usersService.findByLogin(login);
-    
+
     if (!user) {
+      console.log('User not found');
       throw new UnauthorizedException('User not found');
     }
-    
-    if (user.tabel !== tabel) {
+
+    console.log('Found user:', user.toJSON());
+
+    if (!user.tabel || user.tabel !== tabel) {
+      console.log('Tabel numbers do not match:', {
+        expected: user.tabel,
+        received: tabel,
+        userObject: user.toJSON(),
+      });
       throw new UnauthorizedException('Invalid tabel number');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      console.log('Invalid password');
       throw new UnauthorizedException('Invalid password');
     }
 

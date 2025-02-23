@@ -1,6 +1,9 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
-@Table({ tableName: 'users' })
+@Table({
+  tableName: 'users',
+  modelName: 'User', // добавим явное указание имени модели
+})
 export class User extends Model {
   @Column({
     type: DataType.INTEGER,
@@ -15,18 +18,19 @@ export class User extends Model {
     unique: true,
     allowNull: false,
   })
-  login!: string;
+  declare login: string;
 
   @Column({
     type: DataType.STRING,
     unique: true,
     allowNull: false,
+    field: 'tabel',
   })
-  tabel!: string;
+  declare tabel: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  password!: string;
+  declare password: string;
 }
