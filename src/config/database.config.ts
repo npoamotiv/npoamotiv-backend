@@ -1,15 +1,19 @@
+import { ConfigService } from '@nestjs/config';
 import { SequelizeModuleOptions } from '@nestjs/sequelize';
-import * as dotenv from 'dotenv';
 
-dotenv.config();
-
-export const databaseConfig: SequelizeModuleOptions = {
-  dialect: process.env.DB_DIALECT as any,
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  autoLoadModels: true,
-  synchronize: true,
+export const getDatabaseConfig = (configService: ConfigService): SequelizeModuleOptions => {
+  return {
+    dialect: 'postgres',
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    uri: configService.get('DATABASE_URL'),
+    autoLoadModels: true,
+    synchronize: true,
+    ssl: true,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
+  };
 };
